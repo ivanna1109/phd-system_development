@@ -1,0 +1,10 @@
+artifact_location: file:///home/ivana-milutinovic/Documents/Doktorske/Prva%20godina/RazvojSistema/gitHub/phd-system_development/mlruns/804997072119326765/models/m-d9e0541b5b354b4589920b971d9a2d69/artifacts
+creation_timestamp: 1762440932614
+experiment_id: '804997072119326765'
+last_updated_timestamp: 1762440937031
+model_id: m-d9e0541b5b354b4589920b971d9a2d69
+model_type: null
+name: dnn_model
+source_run_id: 4a5dbb97a176437f9d1c42f7b8cae9f3
+status: 2
+status_message: null
