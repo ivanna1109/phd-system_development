@@ -1,0 +1,37 @@
+digest: 467e275a
+name: test_set
+profile: '{"num_rows": 14139, "num_elements": 650394}'
+schema: '{"mlflow_colspec": [{"type": "double", "name": "HighBP", "required": true},
+  {"type": "double", "name": "HighChol", "required": true}, {"type": "double", "name":
+  "CholCheck", "required": true}, {"type": "double", "name": "BMI", "required": true},
+  {"type": "double", "name": "Smoker", "required": true}, {"type": "double", "name":
+  "Stroke", "required": true}, {"type": "double", "name": "HeartDiseaseorAttack",
+  "required": true}, {"type": "double", "name": "PhysActivity", "required": true},
+  {"type": "double", "name": "Fruits", "required": true}, {"type": "double", "name":
+  "Veggies", "required": true}, {"type": "double", "name": "HvyAlcoholConsump", "required":
+  true}, {"type": "double", "name": "AnyHealthcare", "required": true}, {"type": "double",
+  "name": "NoDocbcCost", "required": true}, {"type": "double", "name": "MentHlth",
+  "required": true}, {"type": "double", "name": "PhysHlth", "required": true}, {"type":
+  "double", "name": "DiffWalk", "required": true}, {"type": "double", "name": "Sex",
+  "required": true}, {"type": "long", "name": "GenHlth_2.0", "required": true}, {"type":
+  "long", "name": "GenHlth_3.0", "required": true}, {"type": "long", "name": "GenHlth_4.0",
+  "required": true}, {"type": "long", "name": "GenHlth_5.0", "required": true}, {"type":
+  "long", "name": "Age_2.0", "required": true}, {"type": "long", "name": "Age_3.0",
+  "required": true}, {"type": "long", "name": "Age_4.0", "required": true}, {"type":
+  "long", "name": "Age_5.0", "required": true}, {"type": "long", "name": "Age_6.0",
+  "required": true}, {"type": "long", "name": "Age_7.0", "required": true}, {"type":
+  "long", "name": "Age_8.0", "required": true}, {"type": "long", "name": "Age_9.0",
+  "required": true}, {"type": "long", "name": "Age_10.0", "required": true}, {"type":
+  "long", "name": "Age_11.0", "required": true}, {"type": "long", "name": "Age_12.0",
+  "required": true}, {"type": "long", "name": "Age_13.0", "required": true}, {"type":
+  "long", "name": "Education_2.0", "required": true}, {"type": "long", "name": "Education_3.0",
+  "required": true}, {"type": "long", "name": "Education_4.0", "required": true},
+  {"type": "long", "name": "Education_5.0", "required": true}, {"type": "long", "name":
+  "Education_6.0", "required": true}, {"type": "long", "name": "Income_2.0", "required":
+  true}, {"type": "long", "name": "Income_3.0", "required": true}, {"type": "long",
+  "name": "Income_4.0", "required": true}, {"type": "long", "name": "Income_5.0",
+  "required": true}, {"type": "long", "name": "Income_6.0", "required": true}, {"type":
+  "long", "name": "Income_7.0", "required": true}, {"type": "long", "name": "Income_8.0",
+  "required": true}, {"type": "double", "name": "Diabetes_binary", "required": true}]}'
+source: '{"uri": "/home/ivana-milutinovic/Documents/Doktorske/Prva godina/RazvojSistema/gitHub/phd-system_development/data_processing/prepared_data/test_set.csv"}'
+source_type: local

@@ -1,0 +1,14 @@
+artifact_uri: file:///home/ivana-milutinovic/Documents/Doktorske/Prva%20godina/RazvojSistema/gitHub/phd-system_development/mlruns/138358877903508145/4d87b97eccfa4c8286e21c4668c9d12f/artifacts
+end_time: 1762599130245
+entry_point_name: ''
+experiment_id: '138358877903508145'
+lifecycle_stage: active
+run_id: 4d87b97eccfa4c8286e21c4668c9d12f
+run_name: DNN_run__V1XAI
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1762599090504
+status: 4
+tags: []
+user_id: ivana-milutinovic

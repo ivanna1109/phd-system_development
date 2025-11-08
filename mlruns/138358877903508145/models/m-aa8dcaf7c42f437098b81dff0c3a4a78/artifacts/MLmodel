@@ -1,0 +1,22 @@
+artifact_path: file:///home/ivana-milutinovic/Documents/Doktorske/Prva%20godina/RazvojSistema/gitHub/phd-system_development/mlruns/138358877903508145/models/m-aa8dcaf7c42f437098b81dff0c3a4a78/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.10.19
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.7.2
+mlflow_version: 3.5.1
+model_id: m-aa8dcaf7c42f437098b81dff0c3a4a78
+model_size_bytes: 5010255
+model_uuid: m-aa8dcaf7c42f437098b81dff0c3a4a78
+prompts: null
+run_id: 48e5dff3cd624af5ae57861eb58958d2
+utc_time_created: '2025-11-08 10:11:54.106176'

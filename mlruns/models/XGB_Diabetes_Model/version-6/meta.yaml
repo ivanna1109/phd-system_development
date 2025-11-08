@@ -1,0 +1,15 @@
+creation_timestamp: 1762601940090
+current_stage: None
+deployment_job_state: null
+description: null
+last_updated_timestamp: 1762601940090
+model_id: m-273e4c3def5547d5b73714ad2468e8c3
+name: XGB_Diabetes_Model
+run_id: 0c8058ff9e934365ad06fde17e429c75
+run_link: null
+source: models:/m-273e4c3def5547d5b73714ad2468e8c3
+status: READY
+status_message: null
+storage_location: file:///home/ivana-milutinovic/Documents/Doktorske/Prva%20godina/RazvojSistema/gitHub/phd-system_development/mlruns/138358877903508145/models/m-273e4c3def5547d5b73714ad2468e8c3/artifacts
+user_id: null
+version: 6

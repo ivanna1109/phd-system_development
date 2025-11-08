@@ -1,0 +1,10 @@
+artifact_location: file:///home/ivana-milutinovic/Documents/Doktorske/Prva%20godina/RazvojSistema/gitHub/phd-system_development/mlruns/138358877903508145/models/m-a8445f05374e4873ad155fdd4f7b82b8/artifacts
+creation_timestamp: 1762606547273
+experiment_id: '138358877903508145'
+last_updated_timestamp: 1762606551268
+model_id: m-a8445f05374e4873ad155fdd4f7b82b8
+model_type: null
+name: model_artifact
+source_run_id: 1ee65522d6bb4246b07e6de80f67d35d
+status: 2
+status_message: null

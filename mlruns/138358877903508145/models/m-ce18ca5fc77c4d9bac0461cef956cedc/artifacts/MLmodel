@@ -1,0 +1,22 @@
+artifact_path: file:///home/ivana-milutinovic/Documents/Doktorske/Prva%20godina/RazvojSistema/gitHub/phd-system_development/mlruns/138358877903508145/models/m-ce18ca5fc77c4d9bac0461cef956cedc/artifacts
+flavors:
+  python_function:
+    data: data
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.tensorflow
+    python_version: 3.10.19
+  tensorflow:
+    code: null
+    data: data
+    keras_version: 2.14.0
+    model_type: keras
+    save_format: tf
+mlflow_version: 3.5.1
+model_id: m-ce18ca5fc77c4d9bac0461cef956cedc
+model_size_bytes: 202856
+model_uuid: m-ce18ca5fc77c4d9bac0461cef956cedc
+prompts: null
+run_id: 0b3d4179391d416e9ab8f0e3fc4ec4b7
+utc_time_created: '2025-11-08 10:54:09.488836'

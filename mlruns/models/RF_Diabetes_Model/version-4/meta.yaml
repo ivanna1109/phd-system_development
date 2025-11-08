@@ -1,0 +1,15 @@
+creation_timestamp: 1762598646668
+current_stage: None
+deployment_job_state: null
+description: null
+last_updated_timestamp: 1762598646668
+model_id: m-1fae5ea12ca9480dbbbe749f505d1e3d
+name: RF_Diabetes_Model
+run_id: ab3f9c39b5274f378fcfb086977b38ef
+run_link: null
+source: models:/m-1fae5ea12ca9480dbbbe749f505d1e3d
+status: READY
+status_message: null
+storage_location: file:///home/ivana-milutinovic/Documents/Doktorske/Prva%20godina/RazvojSistema/gitHub/phd-system_development/mlruns/138358877903508145/models/m-1fae5ea12ca9480dbbbe749f505d1e3d/artifacts
+user_id: null
+version: 4
