@@ -9,12 +9,10 @@ import mlflow.tensorflow
 from tensorflow.keras.callbacks import Callback, EarlyStopping
 from model import create_nn_model , create_rf_model, create_xgb_model
 from xai_metrics import log_shap_analysis, log_lime_analysis
-
-# DODATNI IMPORTOVI ZA LOGOVANJE SKALERA
 import pickle
 import tempfile
 import os 
-# --- KRAJ DODATNIH IMPORTOVA ---
+import subprocess
 
 
 # --- 0. DEFINISANJE ARGUMENATA KOMANDNE LINIJE (ARGPARSE) ---
@@ -86,12 +84,8 @@ class MLflowEpochLogger(Callback):
         
         for name, value in logs.items():
             if name.startswith('val_'):
-                # Metrike sa 'val_' prefiksom logujemo kao 'epoch_val_...'
-                # Npr. val_loss postaje epoch_val_loss
                 new_name = f'val_{name}'
             else:
-                # Metrike bez 'val_' prefiksa logujemo kao 'epoch_train_...'
-                # Npr. loss postaje epoch_train_loss
                 new_name = f'train_{name}'
                 
             mlflow.log_metric(new_name, value, step=epoch)
@@ -99,14 +93,19 @@ class MLflowEpochLogger(Callback):
         # Opcioni ispis u konzolu radi pracenja
         print(f"MLflow Log: Epoch {epoch+1}/{self.params['epochs']} - Train Loss: {logs.get('loss'):.4f} | Val Loss: {logs.get('val_loss'):.4f}")
 
+def get_git_commit_hash():
+    """Vraća trenutni Git commit hash, ili None ako nije u Git repo."""
+    try:
+        commit_hash = subprocess.check_output(['git', 'rev-parse', 'HEAD']).strip().decode('utf-8')
+        return commit_hash
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return None
+    
 def main():
     args = parse_args()
     mlflow.tensorflow.autolog(disable=True)
     mlflow.end_run()
     
-    # 1. POSTAVITE TRACKING URI NA NOVU BAZU
-    # Ovo usmerava klijenta da sve podatke (ukljucujuci Registar Modela) upise u SQLite fajl.
-    # Putanja je lokalna na HOSTU.
     mlflow.set_tracking_uri("sqlite:///mlruns/mlruns.db")
 
     mlflow.set_experiment(args.experiment_name)
@@ -200,6 +199,11 @@ def main():
         
         except ImportError:
             print("Upozorenje: Biblioteka mlflow.data nije pronađena. Logovanje dataset-a je preskočeno.")
+
+        git_hash = get_git_commit_hash()
+        if git_hash:
+            mlflow.set_tag("git_commit", git_hash)
+            print(f"INFO: Logovan Git Commit Hash: {git_hash}")
         
         mlflow.log_params(model_params) # Loguje parametre specifične za odabrani model
         mlflow.log_param("model_type", args.model_type)
@@ -228,7 +232,6 @@ def main():
             mlflow.tensorflow.log_model(model_to_train, artifact_path="model_artifact", 
                                         registered_model_name=model_params['model_name'])
             
-            # *** LOGOVANJE SKALERA (Samo za DNN) ***
             # Skaler je neophodan za predikciju, a ml_loader ga očekuje pod ovim imenom
             scaler_artifact_name = "preprocessor_scaler.pkl"
             
@@ -241,7 +244,15 @@ def main():
                 # Logovanje fajla u koren artefakata MLflow Run-a
                 mlflow.log_artifact(scaler_file_path, artifact_path="") 
                 print(f"INFO: Skaler logovan u MLflow artefakte kao: {scaler_artifact_name}")
-            # ***********************************
+            f1 = 2 * (prec * rec) / (prec + rec) if (prec + rec) else 0
+            final_metrics = {
+                "test_loss": loss,
+                "test_accuracy": acc,
+                "test_f1_score": f1,
+                "test_recall": rec,
+                "test_precision": prec,
+            }
+            mlflow.log_metrics(final_metrics)
 
         else:
             # RF / XGBoost Trening (Sklearn stil)
@@ -256,20 +267,14 @@ def main():
             # Logovanje modela za Sklearn-bazirane modele
             mlflow.sklearn.log_model(model_to_train, artifact_path="model_artifact", 
                                      registered_model_name=model_params['model_name'])
-            
-            # Logujemo metrike za RF/XGBoost direktno (nema metrika po epohi)
-            mlflow.log_metric("test_accuracy", acc)
-
-        # 3. KREIRANJE FINALNIH METRIKA (Za sve modele)
-        f1 = 2 * (prec * rec) / (prec + rec) if (prec + rec) else 0
-
-        final_metrics = {
-            "final_accuracy": acc,
-            "final_f1_score": f1,
-            "final_recall": rec,
-            "final_precision": prec,
-        }
-        mlflow.log_metrics(final_metrics) 
+            f1 = 2 * (prec * rec) / (prec + rec) if (prec + rec) else 0
+            final_metrics = {
+                "test_accuracy": acc,
+                "test_f1_score": f1,
+                "test_recall": rec,
+                "test_precision": prec,
+            }
+            mlflow.log_metrics(final_metrics)
 
         plot_path = log_shap_analysis(
             model=model_to_train, 
