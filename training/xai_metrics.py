@@ -92,4 +92,4 @@ def log_lime_analysis(model, X_test_df, X_test_scaled, model_type, feature_names
     fig.savefig(lime_path, bbox_inches='tight', dpi=300)
     plt.close(fig) 
     
-    return lime_path
+    return lime_path, explainer

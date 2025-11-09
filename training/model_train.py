@@ -286,16 +286,23 @@ def main():
         mlflow.log_artifact(plot_path)
         print(f"SHAP Summary Plot logovan u MLflow artefakte kao: {plot_path}")
 
-        lime_path = log_lime_analysis(
+        lime_path, explainer = log_lime_analysis(
             model=model_to_train, 
         X_test_df=X_test, 
         X_test_scaled=X_test_final, 
         model_type=args.model_type, 
         feature_names=X_test.columns.tolist() 
         )
-
+        explainer_artifact_name = "lime_explainer.pkl"
         mlflow.log_artifact(lime_path)
-        print(f"LIME objašnjenje za uzorak logovano kao: {lime_path}")
+        with tempfile.TemporaryDirectory() as temp_dir:
+            explainer_file_path = os.path.join(temp_dir, explainer_artifact_name)
+        
+        # Sačuvaj explainer koristeći pickle
+            with open(explainer_file_path, 'wb') as f:
+                pickle.dump(explainer, f)
+        mlflow.log_artifact(explainer_file_path, artifact_path="") 
+        print(f"INFO: LIME Explainer logovan u MLflow artefakte kao: {explainer_artifact_name}")
 
         print("-------------------------------------------------------")
         print(f"Model završen: {args.model_type}")
