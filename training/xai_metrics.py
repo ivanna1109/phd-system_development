@@ -71,7 +71,8 @@ def log_lime_analysis(model, X_test_df, X_test_scaled, model_type, feature_names
         feature_names=feature_names,
         class_names=class_names,
         mode='classification',
-        random_state=42
+        random_state=42, 
+        discretize_continuous=False
     )
 
     # 3. Izbor uzorka za objašnjenje (npr., prvi uzorak iz Test Seta)
