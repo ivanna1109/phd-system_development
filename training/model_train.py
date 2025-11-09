@@ -84,7 +84,7 @@ class MLflowEpochLogger(Callback):
         
         for name, value in logs.items():
             if name.startswith('val_'):
-                new_name = f'val_{name}'
+                new_name = f'{name}'
             else:
                 new_name = f'train_{name}'
                 
