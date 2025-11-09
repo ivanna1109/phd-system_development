@@ -9,6 +9,7 @@ from ml_loader import get_model_and_scaler
 from django.shortcuts import render
 from prediction_api import predict_utils
 from ml_loader import get_model_and_scaler
+from prediction_api import xai_utils as xai
 
 def index(request):
     return render(request, 'index.html')
@@ -22,6 +23,10 @@ FEATURE_NAMES = ['HighBP', 'HighChol', 'CholCheck', 'BMI', 'Smoker', 'Stroke', '
                    'Education_3.0', 'Education_4.0', 'Education_5.0', 'Education_6.0', 'Income_2.0', 'Income_3.0', 'Income_4.0', 
                    'Income_5.0', 'Income_6.0', 'Income_7.0', 'Income_8.0']
 CLASS_NAMES = ['Bez dijabetesa', 'Dijabetes']
+REGISTERED_MODEL_NAMES = ["NN_Diabetes_Model", "RF_Diabetes_Model", "XGB_Diabetes_Model"]
+
+# === INICIJALIZACIJA LIME EXPLAINER-a NA STARTU SERVERA ===
+xai.initialize_lime_explainers(REGISTERED_MODEL_NAMES)
 
 def expand_categorical_features(raw_data):
     """
@@ -78,10 +83,18 @@ def predict_diagnosis(request):
         # Tree modeli ne skaliraju podatke
             pred_idx, confidence, probs = predict_utils.predict_model(model, input_df)
 
+        lime_data = xai.generate_api_lime_explanation(
+            sample_df=input_df, 
+            model=model,
+            scaler=scaler,
+            model_type=model_name,
+        )
+        #print(f"Lime data:{lime_data}")
         results[model_name] = {
             "prediction": CLASS_NAMES[pred_idx],
             "confidence": f"{confidence:.4f}",
-            "probabilities": {cls: f"{prob:.4f}" for cls, prob in zip(CLASS_NAMES, probs)}
+            "probabilities": {cls: f"{prob:.4f}" for cls, prob in zip(CLASS_NAMES, probs)},
+            "lime_explanation": lime_data
         }
 
     return Response({
