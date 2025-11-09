@@ -15,7 +15,6 @@ import os
 import subprocess
 
 
-# --- 0. DEFINISANJE ARGUMENATA KOMANDNE LINIJE (ARGPARSE) ---
 def parse_args():
     """Parsira argumente iz komandne linije za MLOps pipeline."""
     parser = argparse.ArgumentParser(description="MLflow MLOps Training Script for Diabetes NN")
@@ -90,11 +89,10 @@ class MLflowEpochLogger(Callback):
                 
             mlflow.log_metric(new_name, value, step=epoch)
         
-        # Opcioni ispis u konzolu radi pracenja
         print(f"MLflow Log: Epoch {epoch+1}/{self.params['epochs']} - Train Loss: {logs.get('loss'):.4f} | Val Loss: {logs.get('val_loss'):.4f}")
 
 def get_git_commit_hash():
-    """Vraća trenutni Git commit hash, ili None ako nije u Git repo."""
+    """Trenutni Git commit hash za Audit Trail, ili None ako nije u Git repo."""
     try:
         commit_hash = subprocess.check_output(['git', 'rev-parse', 'HEAD']).strip().decode('utf-8')
         return commit_hash
@@ -137,7 +135,7 @@ def main():
             "epochs": 50, "batch_size": 32, "learning_rate": 0.0005, 
             "layer_1_units": 64, "layer_2_units": 32, "model_name": "NN_Diabetes_Model"
         }
-        # Skaliranje za DNN
+        
         scaler = StandardScaler()
         X_train_final = scaler.fit_transform(X_train)
         X_val_final = scaler.transform(X_val)
@@ -148,7 +146,7 @@ def main():
         model_params = {
             "n_estimators": 150, "max_depth": 8, "random_state": 42, "model_name": "RF_Diabetes_Model"
         }
-        # RF i XGBoost ne zahtevaju skaliranje
+        
         X_train_final = X_train 
         X_val_final = X_val
         X_test_final = X_test
@@ -166,19 +164,16 @@ def main():
     else:
         raise ValueError(f"Nepodrzan tip modela: {args.model_type}")
 
-    # --- 2. TRENIRANJE I LOGOVANJE ---
+    
     with mlflow.start_run(run_name=args.run_name) as run:
         
-        # 5a. Logovanje hiperparametara
         try:
 
-        # Kreiranje objekta za Trening set
             train_dataset = mlflow.data.from_pandas(
             df=train_df,
             source=args.train_file,
             name="train_set"
             )
-        # Kreiranje objekta za Validacioni set
             val_dataset = mlflow.data.from_pandas(
             df=val_df,
             source=args.validation_file,
@@ -191,8 +186,6 @@ def main():
             name="test_set"
             )
         
-        
-        # Logovanje dataset-a u MLflow Run
             mlflow.log_input(train_dataset, context="training")
             mlflow.log_input(val_dataset, context="validation")
             mlflow.log_input(test_dataset, context="evaluation")
@@ -205,14 +198,11 @@ def main():
             mlflow.set_tag("git_commit", git_hash)
             print(f"INFO: Logovan Git Commit Hash: {git_hash}")
         
-        mlflow.log_params(model_params) # Loguje parametre specifične za odabrani model
+        mlflow.log_params(model_params) 
         mlflow.log_param("model_type", args.model_type)
         mlflow.set_tag("dataset_dvc_version", args.dvc_version)
         
-        # LOGIKA TRENINGA I EVALUACIJE ZA RAZLIČITE TIPOVE MODELA
-        
         if args.model_type == 'DNN':
-            # DNN Trening
             early_stopping = EarlyStopping(monitor='val_loss', patience=10, mode='min', restore_best_weights=True, verbose=1)
             custom_logger = MLflowEpochLogger()
             callbacks_list = [custom_logger, early_stopping]
@@ -225,23 +215,18 @@ def main():
                 verbose=0,
                 callbacks=callbacks_list 
             )
-            # Evaluacija (DNN koristi evaluate)
             loss, acc, prec, rec = model_to_train.evaluate(X_test_final, y_test, verbose=0)
             
-            # Logovanje modela za DNN (TensorFlow/Keras)
             mlflow.tensorflow.log_model(model_to_train, artifact_path="model_artifact", 
                                         registered_model_name=model_params['model_name'])
             
-            # Skaler je neophodan za predikciju, a ml_loader ga očekuje pod ovim imenom
             scaler_artifact_name = "preprocessor_scaler.pkl"
             
-            # Privremeno kreiranje fajla za logovanje u MLflow
             with tempfile.TemporaryDirectory() as temp_dir:
                 scaler_file_path = os.path.join(temp_dir, scaler_artifact_name)
                 with open(scaler_file_path, 'wb') as f:
                     pickle.dump(scaler, f)
                 
-                # Logovanje fajla u koren artefakata MLflow Run-a
                 mlflow.log_artifact(scaler_file_path, artifact_path="") 
                 print(f"INFO: Skaler logovan u MLflow artefakte kao: {scaler_artifact_name}")
             f1 = 2 * (prec * rec) / (prec + rec) if (prec + rec) else 0
@@ -255,16 +240,13 @@ def main():
             mlflow.log_metrics(final_metrics)
 
         else:
-            # RF / XGBoost Trening (Sklearn stil)
             model_to_train.fit(X_train_final, y_train)
             
-            # Evaluacija (Sklearn koristi predict/predict_proba)
             y_pred = model_to_train.predict(X_test_final)
             acc = accuracy_score(y_test, y_pred)
             prec = precision_score(y_test, y_pred)
             rec = recall_score(y_test, y_pred)
             
-            # Logovanje modela za Sklearn-bazirane modele
             mlflow.sklearn.log_model(model_to_train, artifact_path="model_artifact", 
                                      registered_model_name=model_params['model_name'])
             f1 = 2 * (prec * rec) / (prec + rec) if (prec + rec) else 0

@@ -5,7 +5,6 @@ import pandas as pd
 import os
 from prediction_api.predict_utils import predict_model
 
-# === Globalne varijable ===
 LIME_EXPLAINER = {} 
 CLASS_NAMES = ['Bez dijabetesa', 'Dijabetes']
 TARGET_COLUMN = 'Diabetes_binary'
@@ -16,11 +15,10 @@ LIME_TRAIN_DATA_PATH = os.path.join(BASE_DIR, 'data', 'lime_train_set.csv')
 def load_and_prepare_training_data():
     """Učitava train_data.csv, uklanja target kolonu i vraća numpy niz i imena feature-a."""
     try:
-        # Učitavanje celog skupa
+       
         df_train = pd.read_csv(LIME_TRAIN_DATA_PATH)
         print(f"INFO: Učitan CSV fajl za LIME (Originalni shape: {df_train.shape}).")
         
-        # Uklanjanje target kolone (LIME-u trebaju samo feature-i)
         if TARGET_COLUMN in df_train.columns:
             df_features = df_train.drop(columns=[TARGET_COLUMN])
         else:
@@ -54,7 +52,6 @@ def initialize_lime_explainers(model_names):
         class_names=CLASS_NAMES,
         mode='classification',
         random_state=42,
-        # Onemogućavanje diskretizacije je ključno za izbegavanje pickle/lambda grešaka
         discretize_continuous=False 
     )
     
@@ -66,24 +63,21 @@ def initialize_lime_explainers(model_names):
 
 
 def generate_api_lime_explanation(sample_df, model, scaler, model_type):
-    """Generiše LIME objašnjenje za jednu instancu (API poziv)."""
+    """LIME objašnjenje za jednu instancu (API poziv)."""
     
     explainer = LIME_EXPLAINER.get(model_type, None)
     if explainer is None:
         print("Explainer je null")
         return []
 
-    # === 1. Definisanje predict_fn (Wrapper za Skaliranje/Predikciju) ===
     if model_type in ['NN_Diabetes_Model']:
         # Wrapper za DNN koji skalira unutar sebe
         def predict_fn(data):
-            # LIME generiše ne-skalirane podatke, mi ih moramo skalirati pre predikcije
             data_scaled = scaler.transform(data) 
             proba_class_1 = model.predict(data_scaled)
             proba_class_0 = 1 - proba_class_1
             return np.concatenate((proba_class_0, proba_class_1), axis=1)
     else:
-        # Sklearn modeli (RF, XGB)
         def predict_fn(data_array): 
             data_df = pd.DataFrame(data_array, columns=explainer.feature_names)
             
@@ -98,12 +92,9 @@ def generate_api_lime_explanation(sample_df, model, scaler, model_type):
 
     sample_to_explain = sample_df.values[0]
 
-    # === 2. Generisanje LIME objašnjenja ===
     explanation = explainer.explain_instance(
         data_row=sample_to_explain,
         predict_fn=predict_fn,
         num_features=8
     )
-
-    # Vraćamo objašnjenje za klasu 1 (Dijabetes) kao lista torki
     return explanation.as_list(label=1)

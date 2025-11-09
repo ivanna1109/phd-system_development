@@ -1,8 +1,8 @@
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Input, Dropout
-from sklearn.ensemble import RandomForestClassifier # Uvezi RF
-import xgboost as xgb # Uvezi XGBoost
+from sklearn.ensemble import RandomForestClassifier
+import xgboost as xgb 
 
 def create_nn_model(input_dim, units_1, units_2, learning_rate):
     model = Sequential([
@@ -31,7 +31,6 @@ def create_rf_model(n_estimators=100, max_depth=None, random_state=42):
     )
     return rf_model
 
-# ----------------------------------------------------
 
 def create_xgb_model(n_estimators=100, learning_rate=0.1, max_depth=3, random_state=42):
     """Kreira model XGBoost Klasifikatora."""

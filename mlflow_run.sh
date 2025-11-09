@@ -1,6 +1,5 @@
 echo "--- POKRETANJE LOKALNOG MLFLOW SERVERA ---"
 echo "MLflow Server hostuje bazu i artefakte na http://127.0.0.1:5001"
-echo "Ostavite ovaj terminal otvoren. Pritisnite CTRL+C za zaustavljanje."
 echo "------------------------------------------------------------------"
 
 mlflow server \
