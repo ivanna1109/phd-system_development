@@ -1,8 +1,8 @@
 creation_timestamp: 1762606551310
-current_stage: None
+current_stage: Production
 deployment_job_state: null
 description: null
-last_updated_timestamp: 1762606551310
+last_updated_timestamp: 1762620074100
 model_id: m-a8445f05374e4873ad155fdd4f7b82b8
 name: NN_Diabetes_Model
 run_id: 1ee65522d6bb4246b07e6de80f67d35d

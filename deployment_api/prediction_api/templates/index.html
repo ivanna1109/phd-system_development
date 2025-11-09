@@ -1,0 +1,102 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8">
+  <title>🩺 Predikcija dijabetesa</title>
+  <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+
+<body>
+  <div class="container">
+    <h1>🩸 Predikcija dijabetesa</h1>
+    <p class="subtitle">Unesite vrednosti za parametre pacijenta i izaberite modele za predikciju</p>
+
+    <!-- Forma za unos podataka -->
+    <form id="predictionForm">
+
+      <div class="form-section">
+        <h3>🧠 Izaberite modele</h3>
+        <label><input type="checkbox" name="models" value="XGB_Diabetes_Model"> XGBoost</label>
+        <label><input type="checkbox" name="models" value="RF_Diabetes_Model"> Random Forest</label>
+        <label><input type="checkbox" name="models" value="NN_Diabetes_Model" checked> DNN</label>
+      </div>
+
+      <div class="form-section">
+        <h3>⚙️ Unesite vrednosti parametara</h3>
+
+        <!-- Primer unosa za nekoliko feature-a -->
+        <div class="grid">
+        <label>Visok krvni pritisak:
+        <select name="HighBP">
+          <option value="0" selected>Ne</option>
+          <option value="1">Da</option>
+        </select>
+        </label>
+
+        <label>Visok holesterol:
+          <select name="HighChol">
+          <option value="0" selected>Ne</option>
+          <option value="1">Da</option>
+        </select>
+        </label>
+          <label>Body Mass Index (BMI): <input type="number" name="BMI" step="0.1" min="10" max="60" value="25"></label>
+          <label>Pušač:
+        <select name="Smoker">
+          <option value="0" selected>Ne</option>
+          <option value="1">Da</option>
+        </select>
+        </label>
+
+        <label>Moždani udar?
+          <select name="Stroke">
+          <option value="0" selected>Ne</option>
+          <option value="1">Da</option>
+        </select>
+        </label>
+        <label>Koronarna bolest srca?
+          <select name="HeartDiseaseorAttack">
+          <option value="0" selected>Ne</option>
+          <option value="1">Da</option>
+        </select>
+        </label>
+        <label>Fizička aktivnost u poslednjih 30 dana?
+          <select name="PhysActivity">
+          <option value="0" selected>Ne</option>
+          <option value="1">Da</option>
+        </select>
+        </label>
+        <label>Konzumacija voća (min jednom dnevno)?
+          <select name="Fruits">
+          <option value="0" selected>Ne</option>
+          <option value="1">Da</option>
+        </select>
+        </label>
+        <label>Konzumacija povrća (min jednom dnevno)?
+          <select name="Veggies">
+          <option value="0" selected>Ne</option>
+          <option value="1">Da</option>
+        </select>
+        </label>
+        <label>Mentalno zdravlje u poslednjih 30 dana?: <input type="number" name="MentHlth" step="1" min="0" max="30" value="0"></label>
+        <label>Fizička povreda u prethodnih 30 dana?: <input type="number" name="PhysHlth" step="1" min="0" max="30" value="0"></label>
+        <label>Problem sa penjanjem uz stepenice? ?
+          <select name="DiffWalk">
+          <option value="0" selected>Ne</option>
+          <option value="1">Da</option>
+        </select>
+        </label>
+        </div>
+      </div>
+
+      <div class="form-section center">
+        <button type="button" id="predictBtn">🔮 Predvidi</button>
+      </div>
+    </form>
+
+    <div id="result" class="result-box"></div>
+  </div>
+  <script src="{% static 'script.js' %}"></script>
+
+</body>
+</html>

@@ -10,6 +10,13 @@ from tensorflow.keras.callbacks import Callback, EarlyStopping
 from model import create_nn_model , create_rf_model, create_xgb_model
 from xai_metrics import log_shap_analysis, log_lime_analysis
 
+# DODATNI IMPORTOVI ZA LOGOVANJE SKALERA
+import pickle
+import tempfile
+import os 
+# --- KRAJ DODATNIH IMPORTOVA ---
+
+
 # --- 0. DEFINISANJE ARGUMENATA KOMANDNE LINIJE (ARGPARSE) ---
 def parse_args():
     """Parsira argumente iz komandne linije za MLOps pipeline."""
@@ -97,6 +104,11 @@ def main():
     mlflow.tensorflow.autolog(disable=True)
     mlflow.end_run()
     
+    # 1. POSTAVITE TRACKING URI NA NOVU BAZU
+    # Ovo usmerava klijenta da sve podatke (ukljucujuci Registar Modela) upise u SQLite fajl.
+    # Putanja je lokalna na HOSTU.
+    mlflow.set_tracking_uri("sqlite:///mlruns/mlruns.db")
+
     mlflow.set_experiment(args.experiment_name)
     
     try:
@@ -108,6 +120,9 @@ def main():
         print(f"Greška pri učitavanju fajla: {e}. Proveri putanje!")
         return 
 
+    TARGET_COLUMN = 'Diabetes_binary'
+    FEATURE_COLUMNS = [col for col in train_df.columns if col != TARGET_COLUMN]
+    print(f"Feature columns: {FEATURE_COLUMNS}")
     X_train = train_df.drop('Diabetes_binary', axis=1)
     y_train = train_df['Diabetes_binary']
     X_val = val_df.drop('Diabetes_binary', axis=1)
@@ -210,9 +225,24 @@ def main():
             loss, acc, prec, rec = model_to_train.evaluate(X_test_final, y_test, verbose=0)
             
             # Logovanje modela za DNN (TensorFlow/Keras)
-            mlflow.tensorflow.log_model(model_to_train, name="model_artifact", 
+            mlflow.tensorflow.log_model(model_to_train, artifact_path="model_artifact", 
                                         registered_model_name=model_params['model_name'])
             
+            # *** LOGOVANJE SKALERA (Samo za DNN) ***
+            # Skaler je neophodan za predikciju, a ml_loader ga očekuje pod ovim imenom
+            scaler_artifact_name = "preprocessor_scaler.pkl"
+            
+            # Privremeno kreiranje fajla za logovanje u MLflow
+            with tempfile.TemporaryDirectory() as temp_dir:
+                scaler_file_path = os.path.join(temp_dir, scaler_artifact_name)
+                with open(scaler_file_path, 'wb') as f:
+                    pickle.dump(scaler, f)
+                
+                # Logovanje fajla u koren artefakata MLflow Run-a
+                mlflow.log_artifact(scaler_file_path, artifact_path="") 
+                print(f"INFO: Skaler logovan u MLflow artefakte kao: {scaler_artifact_name}")
+            # ***********************************
+
         else:
             # RF / XGBoost Trening (Sklearn stil)
             model_to_train.fit(X_train_final, y_train)

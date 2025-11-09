@@ -1,0 +1,15 @@
+creation_timestamp: 1762625184420
+current_stage: None
+deployment_job_state: null
+description: null
+last_updated_timestamp: 1762625184420
+model_id: m-236da3f4d26849458b37774990ae6345
+name: NN_Diabetes_Model
+run_id: 3e933e8aabc24300b5e179319b30cb86
+run_link: null
+source: models:/m-236da3f4d26849458b37774990ae6345
+status: READY
+status_message: null
+storage_location: file:///home/ivana-milutinovic/Documents/Doktorske/Prva%20godina/RazvojSistema/gitHub/phd-system_development/mlruns/138358877903508145/models/m-236da3f4d26849458b37774990ae6345/artifacts
+user_id: null
+version: 14
