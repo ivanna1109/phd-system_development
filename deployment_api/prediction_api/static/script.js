@@ -6,7 +6,6 @@ document.getElementById("predictBtn").addEventListener("click", async () => {
   const formData = new FormData(form);
   const data = {};
 
-  // Prikupljanje vrednosti iz forme
   for (let [key, value] of formData.entries()) {
     data[key] = value;
   }
@@ -30,12 +29,10 @@ document.getElementById("predictBtn").addEventListener("click", async () => {
     const result = await response.json();
 
     if (result.status === "success") {
-      // Kreiranje lepog ispisa za svaki model
       let html = `<h3>Rezultati predikcije:</h3>`;
       
       for (let [model, res] of Object.entries(result.results)) {
         
-        // --- LOGIKA ZA PRIKAZ LIME OBJAŠNJENJA ---
         let limeHtml = '';
         console.log(res.lime_explanation)
         if (res.lime_explanation && res.lime_explanation.length > 0) {
@@ -57,8 +54,6 @@ document.getElementById("predictBtn").addEventListener("click", async () => {
           
           limeHtml += `</ul>`;
         }
-        // ------------------------------------------
-
         html += `<div class="model-result">
           <strong>Model ${model}:</strong><br>
           Predikcija: **${res.prediction}** <br>
